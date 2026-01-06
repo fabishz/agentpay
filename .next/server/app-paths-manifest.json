@@ -1,0 +1,15 @@
+{
+  "/_global-error/page": "app/_global-error/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/paywalls/route": "app/api/paywalls/route.js",
+  "/api/stats/route": "app/api/stats/route.js",
+  "/api/transactions/route": "app/api/transactions/route.js",
+  "/dashboard/analytics/page": "app/dashboard/analytics/page.js",
+  "/dashboard/api-keys/page": "app/dashboard/api-keys/page.js",
+  "/dashboard/page": "app/dashboard/page.js",
+  "/dashboard/paywalls/new/page": "app/dashboard/paywalls/new/page.js",
+  "/dashboard/paywalls/page": "app/dashboard/paywalls/page.js",
+  "/dashboard/settings/page": "app/dashboard/settings/page.js",
+  "/dashboard/transactions/page": "app/dashboard/transactions/page.js",
+  "/page": "app/page.js"
+}

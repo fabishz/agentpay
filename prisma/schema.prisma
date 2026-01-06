@@ -1,0 +1,32 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Paywall {
+  id            String        @id @default(uuid())
+  name          String
+  description   String
+  price         Float
+  ownerAddress  String
+  createdAt     DateTime      @default(now())
+  transactions  Transaction[]
+}
+
+model Transaction {
+  id          String   @id @default(uuid())
+  paywallId   String
+  paywall     Paywall  @relation(fields: [paywallId], references: [id])
+  payerAddress String
+  agentName   String?
+  amount      Float
+  amountUsd   Float?
+  txHash      String
+  status      String   @default("pending") // pending, success, failed
+  responseTime Int?
+  createdAt   DateTime @default(now())
+}

@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 10, "column": 0}, "map": {"version":3,"sources":["file:///home/fabrice/Desktop/hackathons/agentpay-gateway/src/components/providers/QueryProvider.tsx"],"sourcesContent":["\"use client\";\n\nimport { QueryClient, QueryClientProvider } from \"@tanstack/react-query\";\nimport { useState } from \"react\";\n\nexport default function QueryProvider({ children }: { children: React.ReactNode }) {\n    const [queryClient] = useState(() => new QueryClient());\n\n    return (\n        <QueryClientProvider client={queryClient}>\n            {children}\n        </QueryClientProvider>\n    );\n}\n"],"names":[],"mappings":";;;;;AAEA;AAAA;AACA;AAHA;;;;AAKe,SAAS,cAAc,EAAE,QAAQ,EAAiC;IAC7E,MAAM,CAAC,YAAY,GAAG,IAAA,wOAAQ,EAAC,IAAM,IAAI,mNAAW;IAEpD,qBACI,qQAAC,oOAAmB;QAAC,QAAQ;kBACxB;;;;;;AAGb"}}]
+}
