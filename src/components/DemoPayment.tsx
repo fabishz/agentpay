@@ -96,6 +96,37 @@ export function DemoPayment({
   const [error, setError] = useState<string | null>(null);
   const [isRealPayment, setIsRealPayment] = useState(false);
 
+  // Helper function to parse and format error messages
+  const getErrorMessage = (err: any): string => {
+    // User rejected the transaction
+    if (err.code === 'ACTION_REJECTED' || err.code === 4001) {
+      return 'Transaction cancelled. You rejected the wallet connection or transaction.';
+    }
+
+    // Insufficient funds
+    if (err.code === 'INSUFFICIENT_FUNDS' || err.message?.includes('insufficient funds')) {
+      return 'Insufficient funds in your wallet to complete this transaction.';
+    }
+
+    // Network errors
+    if (err.code === 'NETWORK_ERROR' || err.message?.includes('network')) {
+      return 'Network error. Please check your connection and try again.';
+    }
+
+    // Contract errors
+    if (err.message?.includes('contract')) {
+      return 'Smart contract error. The paywall contract may not be deployed on this network.';
+    }
+
+    // Wallet not connected
+    if (err.message?.includes('wallet') || err.message?.includes('signer')) {
+      return 'Wallet connection failed. Please ensure MetaMask is unlocked.';
+    }
+
+    // Generic fallback
+    return err.message || 'Payment failed. Please try again.';
+  };
+
   const runDemo = async () => {
     setError(null);
     setIsRunning(true);
@@ -110,8 +141,10 @@ export function DemoPayment({
         await handleRealPayment();
       } catch (err: any) {
         console.error("Payment failed:", err);
-        setError(err.message || "Payment failed");
+        const errorMessage = getErrorMessage(err);
+        setError(errorMessage);
         setIsRunning(false);
+        setCurrentStep(0); // Reset to initial state
       }
     } else {
       // Fallback to simulation
@@ -120,26 +153,28 @@ export function DemoPayment({
   };
 
   const handleRealPayment = async () => {
-    const provider = new ethers.BrowserProvider((window as any).ethereum);
-    const signer = await provider.getSigner();
-    const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
-
-    // Step 1: Connecting
-    setCurrentStep(0);
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    // Step 2: Verifying
-    setCurrentStep(1);
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    // Step 3: Processing (Send Transaction)
-    setCurrentStep(2);
-
-    // Mock paywall ID (1) and amount (0.001 ETH for demo purposes instead of 5 MNEE to be realistic on testnet)
-    const paywallId = 1;
-    const amountInWei = ethers.parseEther("0.001");
-
     try {
+      // Step 1: Connecting to wallet
+      setCurrentStep(0);
+      const provider = new ethers.BrowserProvider((window as any).ethereum);
+
+      // Request account access - this is where user can reject
+      const signer = await provider.getSigner();
+
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      // Step 2: Verifying
+      setCurrentStep(1);
+      const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Step 3: Processing (Send Transaction)
+      setCurrentStep(2);
+
+      // Mock paywall ID (1) and amount (0.001 ETH for demo purposes)
+      const paywallId = 1;
+      const amountInWei = ethers.parseEther("0.001");
+
       const tx = await contract.pay(paywallId, { value: amountInWei });
       setTxHash(tx.hash);
 
@@ -150,6 +185,7 @@ export function DemoPayment({
       // Complete
       completePayment(tx.hash);
     } catch (err) {
+      // Re-throw to be caught by runDemo
       throw err;
     }
   };
@@ -248,20 +284,45 @@ export function DemoPayment({
           </div>
 
           {error && (
-            <div className="bg-destructive/10 text-destructive p-3 rounded-md mb-4 flex items-center gap-2 text-sm">
-              <AlertTriangle className="w-4 h-4" />
-              {error}
+            <div className="bg-destructive/10 border border-destructive/20 text-destructive p-4 rounded-lg mb-4 animate-in fade-in slide-in-from-top-2">
+              <div className="flex items-start gap-3">
+                <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5" />
+                <div className="flex-1">
+                  <p className="font-semibold text-sm mb-1">Payment Failed</p>
+                  <p className="text-sm opacity-90">{error}</p>
+                </div>
+              </div>
+              <div className="mt-3 flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={resetDemo}
+                  className="border-destructive/30 hover:bg-destructive/10"
+                >
+                  Try Again
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setError(null)}
+                  className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                >
+                  Dismiss
+                </Button>
+              </div>
             </div>
           )}
 
-          {!isRunning && !isComplete && currentStep === 0 && (
+          {!isRunning && !isComplete && currentStep === 0 && !error && (
             <div className="text-center py-8">
               <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
                 <Bot className="w-10 h-10 text-primary" />
               </div>
               <h3 className="text-lg font-semibold text-foreground mb-2">Ready to Pay</h3>
               <p className="text-sm text-muted-foreground mb-6 max-w-sm mx-auto">
-                Initiate a payment transaction. If a wallet is detected, it will trigger a real blockchain transaction.
+                {typeof window !== 'undefined' && (window as any).ethereum
+                  ? 'MetaMask detected! Click below to initiate a real blockchain transaction.'
+                  : 'No wallet detected. A simulated payment will be demonstrated.'}
               </p>
               <Button variant="gradient" size="lg" onClick={runDemo}>
                 <Play className="w-4 h-4 mr-2" />
