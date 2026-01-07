@@ -1,3 +1,7 @@
 {
-  "/dashboard/paywalls/new/page": "app/dashboard/paywalls/new/page.js"
+  "/api/analytics/revenue/route": "app/api/analytics/revenue/route.js",
+  "/api/stats/route": "app/api/stats/route.js",
+  "/api/transactions/route": "app/api/transactions/route.js",
+  "/dashboard/page": "app/dashboard/page.js",
+  "/page": "app/page.js"
 }

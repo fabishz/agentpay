@@ -1207,8 +1207,10 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_
 var __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$copy$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Copy$3e$__ = __turbopack_context__.i("[project]/agentpay-gateway/node_modules/lucide-react/dist/esm/icons/copy.js [app-client] (ecmascript) <export default as Copy>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$check$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Check$3e$__ = __turbopack_context__.i("[project]/agentpay-gateway/node_modules/lucide-react/dist/esm/icons/check.js [app-client] (ecmascript) <export default as Check>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$arrow$2d$right$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__ArrowRight$3e$__ = __turbopack_context__.i("[project]/agentpay-gateway/node_modules/lucide-react/dist/esm/icons/arrow-right.js [app-client] (ecmascript) <export default as ArrowRight>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$triangle$2d$alert$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__AlertTriangle$3e$__ = __turbopack_context__.i("[project]/agentpay-gateway/node_modules/lucide-react/dist/esm/icons/triangle-alert.js [app-client] (ecmascript) <export default as AlertTriangle>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$src$2f$lib$2f$utils$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/agentpay-gateway/src/lib/utils.ts [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$canvas$2d$confetti$2f$dist$2f$confetti$2e$module$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/agentpay-gateway/node_modules/canvas-confetti/dist/confetti.module.mjs [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$ethers$2f$lib$2e$esm$2f$ethers$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__$2a$__as__ethers$3e$__ = __turbopack_context__.i("[project]/agentpay-gateway/node_modules/ethers/lib.esm/ethers.js [app-client] (ecmascript) <export * as ethers>");
 ;
 var _s = __turbopack_context__.k.signature();
 "use client";
@@ -1218,6 +1220,14 @@ var _s = __turbopack_context__.k.signature();
 ;
 ;
 ;
+;
+// ABI for AgentPay contract
+const CONTRACT_ABI = [
+    "function pay(uint256 _paywallId) external payable",
+    "event PaymentReceived(uint256 indexed paywallId, address indexed payer, uint256 amount)"
+];
+// Default Hardhat localhost address - change this after deployment if different
+const CONTRACT_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 const steps = [
     {
         id: 1,
@@ -1227,7 +1237,7 @@ const steps = [
             className: "w-6 h-6"
         }, void 0, false, {
             fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-            lineNumber: 40,
+            lineNumber: 51,
             columnNumber: 11
         }, ("TURBOPACK compile-time value", void 0)),
         duration: 1500
@@ -1240,7 +1250,7 @@ const steps = [
             className: "w-6 h-6"
         }, void 0, false, {
             fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-            lineNumber: 47,
+            lineNumber: 58,
             columnNumber: 11
         }, ("TURBOPACK compile-time value", void 0)),
         duration: 1200
@@ -1253,7 +1263,7 @@ const steps = [
             className: "w-6 h-6"
         }, void 0, false, {
             fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-            lineNumber: 54,
+            lineNumber: 65,
             columnNumber: 11
         }, ("TURBOPACK compile-time value", void 0)),
         duration: 2000
@@ -1266,7 +1276,7 @@ const steps = [
             className: "w-6 h-6 animate-spin"
         }, void 0, false, {
             fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-            lineNumber: 61,
+            lineNumber: 72,
             columnNumber: 11
         }, ("TURBOPACK compile-time value", void 0)),
         duration: 2500
@@ -1279,52 +1289,111 @@ function DemoPayment({ paywallName = "Premium Weather API", amount = 5, classNam
     const [currentStep, setCurrentStep] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(0);
     const [isComplete, setIsComplete] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
     const [copied, setCopied] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
-    const txHash = "0x7a3f8c2d1e5b9a4f6c8d2e1a3b5c7d9e1f2a4b6c8d0e2f4a6b8c0d2e4f6a8b0c";
-    const runDemo = ()=>{
+    const [txHash, setTxHash] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("0x7a3f8c2d1e5b9a4f6c8d2e1a3b5c7d9e1f2a4b6c8d0e2f4a6b8c0d2e4f6a8b0c");
+    const [error, setError] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
+    const [isRealPayment, setIsRealPayment] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
+    const runDemo = async ()=>{
+        setError(null);
         setIsRunning(true);
         setCurrentStep(0);
         setIsComplete(false);
-    };
-    (0, __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
-        "DemoPayment.useEffect": ()=>{
-            if (!isRunning || currentStep >= steps.length) return;
-            const timer = setTimeout({
-                "DemoPayment.useEffect.timer": ()=>{
-                    if (currentStep < steps.length - 1) {
-                        setCurrentStep({
-                            "DemoPayment.useEffect.timer": (prev)=>prev + 1
-                        }["DemoPayment.useEffect.timer"]);
-                    } else {
-                        setIsComplete(true);
-                        setIsRunning(false);
-                        // Trigger confetti
-                        (0, __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$canvas$2d$confetti$2f$dist$2f$confetti$2e$module$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"])({
-                            particleCount: 100,
-                            spread: 70,
-                            origin: {
-                                y: 0.6
-                            },
-                            colors: [
-                                '#3b82f6',
-                                '#00d4ff',
-                                '#10b981'
-                            ]
-                        });
-                    }
-                }
-            }["DemoPayment.useEffect.timer"], steps[currentStep].duration);
-            return ({
-                "DemoPayment.useEffect": ()=>clearTimeout(timer)
-            })["DemoPayment.useEffect"];
+        setIsRealPayment(false);
+        // Check if Metamask is installed for real payment
+        if (("TURBOPACK compile-time value", "object") !== 'undefined' && window.ethereum) {
+            try {
+                setIsRealPayment(true);
+                await handleRealPayment();
+            } catch (err) {
+                console.error("Payment failed:", err);
+                setError(err.message || "Payment failed");
+                setIsRunning(false);
+            }
+        } else {
+            // Fallback to simulation
+            runSimulation();
         }
-    }["DemoPayment.useEffect"], [
-        isRunning,
-        currentStep
-    ]);
+    };
+    const handleRealPayment = async ()=>{
+        const provider = new __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$ethers$2f$lib$2e$esm$2f$ethers$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__$2a$__as__ethers$3e$__["ethers"].BrowserProvider(window.ethereum);
+        const signer = await provider.getSigner();
+        const contract = new __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$ethers$2f$lib$2e$esm$2f$ethers$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__$2a$__as__ethers$3e$__["ethers"].Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
+        // Step 1: Connecting
+        setCurrentStep(0);
+        await new Promise((resolve)=>setTimeout(resolve, 1000));
+        // Step 2: Verifying
+        setCurrentStep(1);
+        await new Promise((resolve)=>setTimeout(resolve, 1000));
+        // Step 3: Processing (Send Transaction)
+        setCurrentStep(2);
+        // Mock paywall ID (1) and amount (0.001 ETH for demo purposes instead of 5 MNEE to be realistic on testnet)
+        const paywallId = 1;
+        const amountInWei = __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$ethers$2f$lib$2e$esm$2f$ethers$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__$2a$__as__ethers$3e$__["ethers"].parseEther("0.001");
+        try {
+            const tx = await contract.pay(paywallId, {
+                value: amountInWei
+            });
+            setTxHash(tx.hash);
+            // Step 4: Confirming
+            setCurrentStep(3);
+            await tx.wait();
+            // Complete
+            completePayment(tx.hash);
+        } catch (err) {
+            throw err;
+        }
+    };
+    const runSimulation = ()=>{
+        let step = 0;
+        const interval = setInterval(()=>{
+            if (step < steps.length - 1) {
+                step++;
+                setCurrentStep(step);
+            } else {
+                clearInterval(interval);
+                completePayment("0x7a3f8c2d1e5b9a4f6c8d2e1a3b5c7d9e1f2a4b6c8d0e2f4a6b8c0d2e4f6a8b0c");
+            }
+        }, 1500);
+    };
+    const completePayment = async (hash)=>{
+        setIsComplete(true);
+        setIsRunning(false);
+        setTxHash(hash);
+        // Record transaction in backend
+        try {
+            await fetch('/api/transactions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    paywallId: 'pw_1',
+                    payerAddress: isRealPayment ? '0xUserWallet' : '0xAgentWallet',
+                    amount: amount,
+                    txHash: hash,
+                    status: 'success'
+                })
+            });
+        } catch (e) {
+            console.error("Failed to record transaction", e);
+        }
+        (0, __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$canvas$2d$confetti$2f$dist$2f$confetti$2e$module$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"])({
+            particleCount: 100,
+            spread: 70,
+            origin: {
+                y: 0.6
+            },
+            colors: [
+                '#3b82f6',
+                '#00d4ff',
+                '#10b981'
+            ]
+        });
+    };
     const resetDemo = ()=>{
         setIsRunning(false);
         setCurrentStep(0);
         setIsComplete(false);
+        setError(null);
     };
     const copyTxHash = ()=>{
         navigator.clipboard.writeText(txHash);
@@ -1348,19 +1417,19 @@ function DemoPayment({ paywallName = "Premium Weather API", amount = 5, classNam
                             className: "w-4 h-4 mr-2"
                         }, void 0, false, {
                             fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                            lineNumber: 129,
+                            lineNumber: 215,
                             columnNumber: 11
                         }, this),
                         "Demo Payment"
                     ]
                 }, void 0, true, {
                     fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                    lineNumber: 128,
+                    lineNumber: 214,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                lineNumber: 127,
+                lineNumber: 213,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$src$2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["DialogContent"], {
@@ -1374,19 +1443,19 @@ function DemoPayment({ paywallName = "Premium Weather API", amount = 5, classNam
                                     className: "w-5 h-5 text-primary"
                                 }, void 0, false, {
                                     fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                    lineNumber: 136,
+                                    lineNumber: 222,
                                     columnNumber: 13
                                 }, this),
                                 "Payment Simulation"
                             ]
                         }, void 0, true, {
                             fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                            lineNumber: 135,
+                            lineNumber: 221,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                        lineNumber: 134,
+                        lineNumber: 220,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1404,7 +1473,7 @@ function DemoPayment({ paywallName = "Premium Weather API", amount = 5, classNam
                                                     children: "Paywall"
                                                 }, void 0, false, {
                                                     fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                                    lineNumber: 146,
+                                                    lineNumber: 232,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1412,13 +1481,13 @@ function DemoPayment({ paywallName = "Premium Weather API", amount = 5, classNam
                                                     children: paywallName
                                                 }, void 0, false, {
                                                     fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                                    lineNumber: 147,
+                                                    lineNumber: 233,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                            lineNumber: 145,
+                                            lineNumber: 231,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1429,7 +1498,7 @@ function DemoPayment({ paywallName = "Premium Weather API", amount = 5, classNam
                                                     children: "Amount"
                                                 }, void 0, false, {
                                                     fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                                    lineNumber: 150,
+                                                    lineNumber: 236,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1440,25 +1509,42 @@ function DemoPayment({ paywallName = "Premium Weather API", amount = 5, classNam
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                                    lineNumber: 151,
+                                                    lineNumber: 237,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                            lineNumber: 149,
+                                            lineNumber: 235,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                    lineNumber: 144,
+                                    lineNumber: 230,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                lineNumber: 143,
+                                lineNumber: 229,
                                 columnNumber: 11
+                            }, this),
+                            error && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "bg-destructive/10 text-destructive p-3 rounded-md mb-4 flex items-center gap-2 text-sm",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$triangle$2d$alert$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__AlertTriangle$3e$__["AlertTriangle"], {
+                                        className: "w-4 h-4"
+                                    }, void 0, false, {
+                                        fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
+                                        lineNumber: 244,
+                                        columnNumber: 15
+                                    }, this),
+                                    error
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
+                                lineNumber: 243,
+                                columnNumber: 13
                             }, this),
                             !isRunning && !isComplete && currentStep === 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 className: "text-center py-8",
@@ -1469,28 +1555,28 @@ function DemoPayment({ paywallName = "Premium Weather API", amount = 5, classNam
                                             className: "w-10 h-10 text-primary"
                                         }, void 0, false, {
                                             fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                            lineNumber: 159,
+                                            lineNumber: 252,
                                             columnNumber: 17
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                        lineNumber: 158,
+                                        lineNumber: 251,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
                                         className: "text-lg font-semibold text-foreground mb-2",
-                                        children: "Ready to Simulate"
+                                        children: "Ready to Pay"
                                     }, void 0, false, {
                                         fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                        lineNumber: 161,
+                                        lineNumber: 254,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                         className: "text-sm text-muted-foreground mb-6 max-w-sm mx-auto",
-                                        children: "Watch how an AI agent completes a payment through AgentPay in real-time."
+                                        children: "Initiate a payment transaction. If a wallet is detected, it will trigger a real blockchain transaction."
                                     }, void 0, false, {
                                         fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                        lineNumber: 162,
+                                        lineNumber: 255,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -1502,20 +1588,20 @@ function DemoPayment({ paywallName = "Premium Weather API", amount = 5, classNam
                                                 className: "w-4 h-4 mr-2"
                                             }, void 0, false, {
                                                 fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                                lineNumber: 166,
+                                                lineNumber: 259,
                                                 columnNumber: 17
                                             }, this),
-                                            "Start Demo"
+                                            "Start Payment"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                        lineNumber: 165,
+                                        lineNumber: 258,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                lineNumber: 157,
+                                lineNumber: 250,
                                 columnNumber: 13
                             }, this),
                             (isRunning || currentStep > 0 && !isComplete) && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1533,18 +1619,18 @@ function DemoPayment({ paywallName = "Premium Weather API", amount = 5, classNam
                                                     className: "w-5 h-5"
                                                 }, void 0, false, {
                                                     fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                                    lineNumber: 196,
+                                                    lineNumber: 289,
                                                     columnNumber: 25
                                                 }, this) : isActive ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$loader$2d$circle$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Loader2$3e$__["Loader2"], {
                                                     className: "w-5 h-5 animate-spin"
                                                 }, void 0, false, {
                                                     fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                                    lineNumber: 198,
+                                                    lineNumber: 291,
                                                     columnNumber: 25
                                                 }, this) : step.icon
                                             }, void 0, false, {
                                                 fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                                lineNumber: 189,
+                                                lineNumber: 282,
                                                 columnNumber: 21
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1555,7 +1641,7 @@ function DemoPayment({ paywallName = "Premium Weather API", amount = 5, classNam
                                                         children: step.label
                                                     }, void 0, false, {
                                                         fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                                        lineNumber: 204,
+                                                        lineNumber: 297,
                                                         columnNumber: 23
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1563,7 +1649,7 @@ function DemoPayment({ paywallName = "Premium Weather API", amount = 5, classNam
                                                         children: step.description
                                                     }, void 0, false, {
                                                         fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                                        lineNumber: 212,
+                                                        lineNumber: 305,
                                                         columnNumber: 23
                                                     }, this),
                                                     isActive && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1576,30 +1662,30 @@ function DemoPayment({ paywallName = "Premium Weather API", amount = 5, classNam
                                                             }
                                                         }, void 0, false, {
                                                             fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                                            lineNumber: 217,
+                                                            lineNumber: 310,
                                                             columnNumber: 27
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                                        lineNumber: 216,
+                                                        lineNumber: 309,
                                                         columnNumber: 25
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                                lineNumber: 203,
+                                                lineNumber: 296,
                                                 columnNumber: 21
                                             }, this)
                                         ]
                                     }, step.id, true, {
                                         fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                        lineNumber: 180,
+                                        lineNumber: 273,
                                         columnNumber: 19
                                     }, this);
                                 })
                             }, void 0, false, {
                                 fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                lineNumber: 173,
+                                lineNumber: 266,
                                 columnNumber: 13
                             }, this),
                             isComplete && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1612,20 +1698,20 @@ function DemoPayment({ paywallName = "Premium Weather API", amount = 5, classNam
                                                 className: "w-10 h-10 text-success"
                                             }, void 0, false, {
                                                 fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                                lineNumber: 236,
+                                                lineNumber: 329,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                 className: "absolute inset-0 rounded-full bg-success/20 animate-ping"
                                             }, void 0, false, {
                                                 fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                                lineNumber: 237,
+                                                lineNumber: 330,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                        lineNumber: 235,
+                                        lineNumber: 328,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
@@ -1633,7 +1719,7 @@ function DemoPayment({ paywallName = "Premium Weather API", amount = 5, classNam
                                         children: "Payment Successful!"
                                     }, void 0, false, {
                                         fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                        lineNumber: 239,
+                                        lineNumber: 332,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1644,7 +1730,7 @@ function DemoPayment({ paywallName = "Premium Weather API", amount = 5, classNam
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                        lineNumber: 240,
+                                        lineNumber: 333,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1658,7 +1744,7 @@ function DemoPayment({ paywallName = "Premium Weather API", amount = 5, classNam
                                                         children: "Amount"
                                                     }, void 0, false, {
                                                         fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                                        lineNumber: 247,
+                                                        lineNumber: 340,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1669,13 +1755,13 @@ function DemoPayment({ paywallName = "Premium Weather API", amount = 5, classNam
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                                        lineNumber: 248,
+                                                        lineNumber: 341,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                                lineNumber: 246,
+                                                lineNumber: 339,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1686,7 +1772,7 @@ function DemoPayment({ paywallName = "Premium Weather API", amount = 5, classNam
                                                         children: "Status"
                                                     }, void 0, false, {
                                                         fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                                        lineNumber: 251,
+                                                        lineNumber: 344,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1696,20 +1782,20 @@ function DemoPayment({ paywallName = "Premium Weather API", amount = 5, classNam
                                                                 className: "w-1.5 h-1.5 rounded-full bg-success"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                                                lineNumber: 253,
+                                                                lineNumber: 346,
                                                                 columnNumber: 21
                                                             }, this),
                                                             "Confirmed"
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                                        lineNumber: 252,
+                                                        lineNumber: 345,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                                lineNumber: 250,
+                                                lineNumber: 343,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1720,7 +1806,7 @@ function DemoPayment({ paywallName = "Premium Weather API", amount = 5, classNam
                                                         children: "Response Time"
                                                     }, void 0, false, {
                                                         fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                                        lineNumber: 258,
+                                                        lineNumber: 351,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1728,13 +1814,13 @@ function DemoPayment({ paywallName = "Premium Weather API", amount = 5, classNam
                                                         children: "127ms"
                                                     }, void 0, false, {
                                                         fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                                        lineNumber: 259,
+                                                        lineNumber: 352,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                                lineNumber: 257,
+                                                lineNumber: 350,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1745,7 +1831,7 @@ function DemoPayment({ paywallName = "Premium Weather API", amount = 5, classNam
                                                         children: "Transaction Hash"
                                                     }, void 0, false, {
                                                         fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                                        lineNumber: 262,
+                                                        lineNumber: 355,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1756,7 +1842,7 @@ function DemoPayment({ paywallName = "Premium Weather API", amount = 5, classNam
                                                                 children: txHash
                                                             }, void 0, false, {
                                                                 fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                                                lineNumber: 264,
+                                                                lineNumber: 357,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -1768,18 +1854,18 @@ function DemoPayment({ paywallName = "Premium Weather API", amount = 5, classNam
                                                                     className: "w-4 h-4 text-success"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                                                    lineNumber: 268,
+                                                                    lineNumber: 361,
                                                                     columnNumber: 33
                                                                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$copy$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Copy$3e$__["Copy"], {
                                                                     className: "w-4 h-4"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                                                    lineNumber: 268,
+                                                                    lineNumber: 361,
                                                                     columnNumber: 78
                                                                 }, this)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                                                lineNumber: 267,
+                                                                lineNumber: 360,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
@@ -1794,35 +1880,35 @@ function DemoPayment({ paywallName = "Premium Weather API", amount = 5, classNam
                                                                         className: "w-4 h-4"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                                                        lineNumber: 272,
+                                                                        lineNumber: 365,
                                                                         columnNumber: 25
                                                                     }, this)
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                                                    lineNumber: 271,
+                                                                    lineNumber: 364,
                                                                     columnNumber: 23
                                                                 }, this)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                                                lineNumber: 270,
+                                                                lineNumber: 363,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                                        lineNumber: 263,
+                                                        lineNumber: 356,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                                lineNumber: 261,
+                                                lineNumber: 354,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                        lineNumber: 245,
+                                        lineNumber: 338,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1834,7 +1920,7 @@ function DemoPayment({ paywallName = "Premium Weather API", amount = 5, classNam
                                                 children: "Run Again"
                                             }, void 0, false, {
                                                 fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                                lineNumber: 280,
+                                                lineNumber: 373,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -1846,37 +1932,37 @@ function DemoPayment({ paywallName = "Premium Weather API", amount = 5, classNam
                                                         className: "w-4 h-4 ml-1"
                                                     }, void 0, false, {
                                                         fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                                        lineNumber: 285,
+                                                        lineNumber: 378,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                                lineNumber: 283,
+                                                lineNumber: 376,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                        lineNumber: 279,
+                                        lineNumber: 372,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                                lineNumber: 234,
+                                lineNumber: 327,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                        lineNumber: 141,
+                        lineNumber: 227,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                lineNumber: 133,
+                lineNumber: 219,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$agentpay$2d$gateway$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("style", {
@@ -1888,17 +1974,17 @@ function DemoPayment({ paywallName = "Premium Weather API", amount = 5, classNam
       `
             }, void 0, false, {
                 fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-                lineNumber: 293,
+                lineNumber: 386,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/agentpay-gateway/src/components/DemoPayment.tsx",
-        lineNumber: 126,
+        lineNumber: 212,
         columnNumber: 5
     }, this);
 }
-_s(DemoPayment, "t5JB2eqo68mJkHFDNxjgtX1JqX0=");
+_s(DemoPayment, "/ur0XKv+ngFqCcY/jc4b/Llb2wY=");
 _c = DemoPayment;
 var _c;
 __turbopack_context__.k.register(_c, "DemoPayment");

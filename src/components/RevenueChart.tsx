@@ -2,23 +2,46 @@
 
 import { useState, useEffect } from "react";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
-import { getRevenueChartData } from "@/lib/mockData";
+import { useQuery } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
+import { Loader2 } from "lucide-react";
 
 interface RevenueChartProps {
   className?: string;
 }
 
+interface ChartData {
+  date: string;
+  revenue: number;
+  payments: number;
+}
+
+async function fetchRevenueData() {
+  const res = await fetch('/api/analytics/revenue');
+  if (!res.ok) throw new Error('Failed to fetch revenue data');
+  return res.json();
+}
+
 export function RevenueChart({ className }: RevenueChartProps) {
   const [showUsd, setShowUsd] = useState(true);
   const [mounted, setMounted] = useState(false);
-  const data = getRevenueChartData();
+
+  const { data = [], isLoading } = useQuery<ChartData[]>({
+    queryKey: ['revenue'],
+    queryFn: fetchRevenueData,
+  });
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  if (!mounted) return null;
+  if (!mounted || isLoading) {
+    return (
+      <div className={cn("glass-card p-6 flex items-center justify-center", className)} style={{ minHeight: '340px' }}>
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className={cn("glass-card p-6", className)}>

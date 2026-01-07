@@ -1028,6 +1028,10 @@ code, pre {
   min-height: 100svh;
 }
 
+.min-h-\[400px\] {
+  min-height: 400px;
+}
+
 .w-0 {
   width: 0;
 }
@@ -1222,6 +1226,10 @@ code, pre {
 
 .max-w-xl {
   max-width: 36rem;
+}
+
+.max-w-md {
+  max-width: 28rem;
 }
 
 .flex-1 {

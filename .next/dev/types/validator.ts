@@ -119,6 +119,24 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
+// Validate ../../../src/app/api/analytics/revenue/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/analytics/revenue">> = Specific
+  const handler = {} as typeof import("../../../src/app/api/analytics/revenue/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../../src/app/api/paywalls/[id]/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/paywalls/[id]">> = Specific
+  const handler = {} as typeof import("../../../src/app/api/paywalls/[id]/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
 // Validate ../../../src/app/api/paywalls/route.ts
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/api/paywalls">> = Specific

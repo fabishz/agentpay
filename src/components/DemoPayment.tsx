@@ -25,6 +25,7 @@ import {
 import { cn } from "@/lib/utils";
 import confetti from "canvas-confetti";
 import { ethers } from "ethers";
+import { useQueryClient } from "@tanstack/react-query";
 
 // ABI for AgentPay contract
 const CONTRACT_ABI = [
@@ -85,6 +86,7 @@ export function DemoPayment({
   amount = 5,
   className
 }: DemoPaymentProps) {
+  const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
@@ -183,6 +185,12 @@ export function DemoPayment({
           status: 'success'
         })
       });
+
+      // Invalidate queries to refresh dashboard data
+      queryClient.invalidateQueries({ queryKey: ['transactions'] });
+      queryClient.invalidateQueries({ queryKey: ['recentTransactions'] });
+      queryClient.invalidateQueries({ queryKey: ['stats'] });
+      queryClient.invalidateQueries({ queryKey: ['revenue'] });
     } catch (e) {
       console.error("Failed to record transaction", e);
     }

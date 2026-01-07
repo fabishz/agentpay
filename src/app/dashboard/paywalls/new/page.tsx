@@ -14,11 +14,23 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { CodeBlock } from "@/components/CodeBlock";
-import { ArrowLeft, DollarSign, Zap } from "lucide-react";
+import { ArrowLeft, DollarSign, Zap, Loader2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+
+async function createPaywall(data: any) {
+    const res = await fetch('/api/paywalls', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error('Failed to create paywall');
+    return res.json();
+}
 
 export default function CreatePaywall() {
     const router = useRouter();
+    const queryClient = useQueryClient();
     const [formData, setFormData] = useState({
         name: '',
         description: '',
@@ -30,15 +42,49 @@ export default function CreatePaywall() {
         accessDuration: '1 hour',
     });
 
+    const mutation = useMutation({
+        mutationFn: createPaywall,
+        onSuccess: (data) => {
+            queryClient.invalidateQueries({ queryKey: ['paywalls'] });
+            toast({
+                title: "Paywall Created!",
+                description: `${data.name} is now active and ready to receive payments.`,
+            });
+            router.push('/dashboard/paywalls');
+        },
+        onError: (error) => {
+            toast({
+                title: "Error",
+                description: "Failed to create paywall. Please try again.",
+                variant: "destructive",
+            });
+        },
+    });
+
     const priceInUsd = formData.price ? parseFloat(formData.price) : 0;
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        toast({
-            title: "Paywall Created!",
-            description: `${formData.name} is now active and ready to receive payments.`,
+
+        // Basic validation
+        if (!formData.name || !formData.price || !formData.endpoint) {
+            toast({
+                title: "Validation Error",
+                description: "Please fill in all required fields.",
+                variant: "destructive",
+            });
+            return;
+        }
+
+        // Use a placeholder wallet address for demo purposes
+        const ownerAddress = '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb1';
+
+        mutation.mutate({
+            name: formData.name,
+            description: formData.description,
+            price: formData.price,
+            ownerAddress,
         });
-        router.push('/dashboard/paywalls');
     };
 
     const exampleCode = `curl -X POST https://api.agentpay.io/v1/pay \\
@@ -204,11 +250,20 @@ export default function CreatePaywall() {
 
                     {/* Actions */}
                     <div className="flex items-center gap-3">
-                        <Button type="submit" variant="gradient" size="lg">
-                            <Zap className="w-4 h-4 mr-2" />
-                            Create Paywall
+                        <Button type="submit" variant="gradient" size="lg" disabled={mutation.isPending}>
+                            {mutation.isPending ? (
+                                <>
+                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                    Creating...
+                                </>
+                            ) : (
+                                <>
+                                    <Zap className="w-4 h-4 mr-2" />
+                                    Create Paywall
+                                </>
+                            )}
                         </Button>
-                        <Button type="button" variant="outline" size="lg" onClick={() => router.back()}>
+                        <Button type="button" variant="outline" size="lg" onClick={() => router.back()} disabled={mutation.isPending}>
                             Cancel
                         </Button>
                     </div>
