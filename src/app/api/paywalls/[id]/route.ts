@@ -3,11 +3,12 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET(
     request: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
+    const { id } = await params;
     try {
         const paywall = await prisma.paywall.findUnique({
-            where: { id: params.id },
+            where: { id },
             include: { transactions: true },
         });
 
@@ -23,17 +24,18 @@ export async function GET(
 
 export async function DELETE(
     request: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
+    const { id } = await params;
     try {
         // Delete associated transactions first
         await prisma.transaction.deleteMany({
-            where: { paywallId: params.id },
+            where: { paywallId: id },
         });
 
         // Then delete the paywall
         await prisma.paywall.delete({
-            where: { id: params.id },
+            where: { id },
         });
 
         return NextResponse.json({ success: true });
@@ -44,12 +46,13 @@ export async function DELETE(
 
 export async function PATCH(
     request: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
+    const { id } = await params;
     try {
         const body = await request.json();
         const paywall = await prisma.paywall.update({
-            where: { id: params.id },
+            where: { id },
             data: body,
         });
 
